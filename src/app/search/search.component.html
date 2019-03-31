@@ -1,17 +1,16 @@
 <input
   #searchInput
   type="text"
-  [(ngModel)]="commentsArr"
 >
 
-<div *ngIf="inputEmpty">
+<div *ngIf="isInputEmpty">
   <ul>
     <li *ngFor="let comment of comments$ | async | sort:byEmail">{{ comment.email }}</li>
   </ul>
 </div>
 
 
-<div *ngIf="!inputEmpty">
+<div *ngIf="!isInputEmpty">
   <ul>
     <li *ngFor="let arr of newArr | sort:byEmail">{{ arr.email }}</li>
   </ul>

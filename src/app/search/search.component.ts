@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild, ElementRef, Renderer2 } from '@angular/core';
-import { fromEvent, of, interval, EMPTY, Subscription, Observable } from 'rxjs';
-import { debounceTime, switchMap, scan, buffer, bufferTime, startWith, take, mapTo, audit, bufferCount, map, filter, pluck, auditTime, tap } from 'rxjs/operators';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { fromEvent, of, Observable } from 'rxjs';
+import { debounceTime, switchMap, pluck } from 'rxjs/operators';
 import { SearchService } from './search.service';
 
 @Component({
@@ -14,20 +14,18 @@ export class SearchComponent implements OnInit {
   myArray = ['hi', 'ho', 'hoq', 'how', 'hey', 'happy', 'halloween', 'harry', 'howl'];
   newArr = [];
   selectedValue: string;
-  inputEmpty: boolean = false;
+  isInputEmpty: boolean = false;
   commentsArr = [];
 
   comments$: Observable<any>;
 
   constructor(
-    private searchService: SearchService,
-    private renderer: Renderer2
+    private searchService: SearchService
   ) { }
 
   ngOnInit() {
     this.comments$ = this.searchService.getCommentsFromJSONPlaceholder();
-    this.inputEmpty = this.input.nativeElement.value === '';
-
+    this.isInputEmpty = this.input.nativeElement.value === '';
     let input$ = fromEvent(this.input.nativeElement, 'keyup');
     input$.pipe(
       pluck('key'),
@@ -36,7 +34,8 @@ export class SearchComponent implements OnInit {
       // scan((curr, acc) => curr.concat(acc)),
       debounceTime(400),
       switchMap(x => {
-        this.inputEmpty = this.input.nativeElement.value === '';
+        this.isInputEmpty = this.input.nativeElement.value === '';
+
         this.comments$.subscribe(y => { 
           this.newArr = y.filter(el => el.email.match(this.input.nativeElement.value))
         });
