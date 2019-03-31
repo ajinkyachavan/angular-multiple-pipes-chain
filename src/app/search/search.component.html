@@ -1,0 +1,28 @@
+<input
+  #searchInput
+  type="text"
+  [(ngModel)]="commentsArr"
+>
+
+<div *ngIf="inputEmpty">
+  <ul>
+    <li *ngFor="let comment of comments$ | async | sort:byEmail">{{ comment.email }}</li>
+  </ul>
+</div>
+
+
+<div *ngIf="!inputEmpty">
+  <ul>
+    <li *ngFor="let arr of newArr | sort:byEmail">{{ arr.email }}</li>
+  </ul>
+</div>
+
+<!-- <select
+  [(ngModel)]='selectedValue'
+  class='form-control'
+>
+  <option
+    [value]="arr"
+    *ngFor="let arr of newArr"
+  >{{ arr }}</option>
+</select> -->
