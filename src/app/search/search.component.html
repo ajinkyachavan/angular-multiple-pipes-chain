@@ -1,20 +1,28 @@
 <input
   #searchInput
+  appInputDirective
+  [highlightColor]='highlightColor'
   type="text"
 >
 
-<div *ngIf="isInputEmpty">
+<button
+  appSearch
+  [numberOfClicks]="numberOfClicks"
+>
+  Click me
+</button>
+
+<!-- <div *ngIf="isInputEmpty"> -->
   <ul>
-    <li *ngFor="let comment of comments$ | async | sort:byEmail">{{ comment.email }}</li>
+    <li *ngFor="let comment of searchService.comments$ | async | sort:byEmail | asyncObsFilter:input.nativeElement.value">{{ comment.email }}</li>
   </ul>
-</div>
+<!-- </div> -->
 
-
-<div *ngIf="!isInputEmpty">
+<!-- <div *ngIf="!isInputEmpty">
   <ul>
     <li *ngFor="let arr of newArr | sort:byEmail">{{ arr.email }}</li>
   </ul>
-</div>
+</div> -->
 
 <!-- <select
   [(ngModel)]='selectedValue'

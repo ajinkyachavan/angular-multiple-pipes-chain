@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { fromEvent, of, Observable } from 'rxjs';
-import { debounceTime, switchMap, pluck } from 'rxjs/operators';
+import { fromEvent } from 'rxjs';
+import { debounceTime, pluck } from 'rxjs/operators';
 import { SearchService } from './search.service';
 
 @Component({
@@ -10,22 +10,24 @@ import { SearchService } from './search.service';
 })
 export class SearchComponent implements OnInit {
 
-  @ViewChild('searchInput') input: ElementRef;
-  myArray = ['hi', 'ho', 'hoq', 'how', 'hey', 'happy', 'halloween', 'harry', 'howl'];
+  @ViewChild('searchInput') public input: ElementRef;
   newArr = [];
-  selectedValue: string;
   isInputEmpty: boolean = false;
-  commentsArr = [];
-
-  comments$: Observable<any>;
+  highlightColor: string = 'red';
+  numberOfClicks: number = 3;
 
   constructor(
-    private searchService: SearchService
+    public searchService: SearchService
   ) { }
 
   ngOnInit() {
-    this.comments$ = this.searchService.getCommentsFromJSONPlaceholder();
-    this.isInputEmpty = this.input.nativeElement.value === '';
+    this.searchService.numberOfClicks$.subscribe(
+      x => {
+        this.highlightColor = this.highlightColor === 'red' ? 'blue' : 'red';
+      }
+    );
+
+    // this.checkIfInputEmpty();
     let input$ = fromEvent(this.input.nativeElement, 'keyup');
     input$.pipe(
       pluck('key'),
@@ -33,15 +35,17 @@ export class SearchComponent implements OnInit {
       // buffer(input$.pipe(debounceTime(500))),
       // scan((curr, acc) => curr.concat(acc)),
       debounceTime(400),
-      switchMap(x => {
-        this.isInputEmpty = this.input.nativeElement.value === '';
-
-        this.comments$.subscribe(y => { 
-          this.newArr = y.filter(el => el.email.match(this.input.nativeElement.value))
-        });
-        return of(true);
-      })
     ).subscribe()
+  }
+
+  checkIfInputEmpty() {
+    if (this.input.nativeElement.value === '') {
+      this.isInputEmpty = true;
+      this.highlightColor = 'red';
+    } else {
+      this.isInputEmpty = false;
+      this.highlightColor = 'blue';
+    }
   }
 
   byEmail(a, b) {

@@ -5,9 +5,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class SortPipe implements PipeTransform {
 
-  transform(ary: any, fn: Function = (a, b) => a > b ? 1 : -1): any {
+  transform(ary: any, args?): any {
+    console.log(args)
     if (ary) {
-      return ary.sort(fn)
+      return ary.sort(args)
     }
     return null;
   }
